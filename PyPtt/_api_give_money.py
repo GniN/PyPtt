@@ -7,7 +7,7 @@ from . import i18n
 from . import lib_util
 
 
-def give_money(api, ptt_id: str, money: int, red_bag_title: str, red_bag_content: str) -> None:
+def give_money(api, ptt_id: str, money: int, red_bag_title: str, red_bag_content: str, anonymous: bool) -> None:
     _api_util.one_thread(api)
 
     if not api._is_login:
@@ -65,6 +65,8 @@ def give_money(api, ptt_id: str, money: int, red_bag_title: str, red_bag_content
         edit_red_bag_cmd = ''.join(edit_red_bag_cmd_list)
         edit_red_bag_target = connect_core.TargetUnit('要修改紅包袋嗎', response=edit_red_bag_cmd)
 
+    anonymous_cmd = '{cmd}'.format(cmd='y' if anonymous else 'n')
+
     target_list = [
         connect_core.TargetUnit('你沒有那麼多Ptt幣喔!', break_detect=True, exceptions_=exceptions.NoMoney()),
         connect_core.TargetUnit('金額過少，交易取消!', break_detect=True, exceptions_=exceptions.NoMoney()),
@@ -75,7 +77,7 @@ def give_money(api, ptt_id: str, money: int, red_bag_title: str, red_bag_content
         edit_red_bag_target,
         connect_core.TargetUnit('要修改紅包袋嗎', response=command.enter),
         connect_core.TargetUnit('完成交易前要重新確認您的身份', response=api._ptt_pw + command.enter),
-        connect_core.TargetUnit('他是你的小主人，是否匿名？', response='n' + command.enter),
+        connect_core.TargetUnit('他是你的小主人，是否匿名？', response=anonymous_cmd + command.enter),
         connect_core.TargetUnit('要給他多少Ptt幣呢?', response=command.tab + str(money) + command.enter),
         connect_core.TargetUnit('這位幸運兒的id', response=ptt_id + command.enter),
         connect_core.TargetUnit('認證尚未過期', response='y' + command.enter),

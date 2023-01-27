@@ -468,7 +468,7 @@ class API:
         return _api_get_user.get_user(self, user_id)
 
     def give_money(self, ptt_id: str, money: int, red_bag_title: Optional[str] = None,
-                   red_bag_content: Optional[str] = None) -> None:
+                   red_bag_content: Optional[str] = None, anonymous: Optional[bool] = False) -> None:
 
         """
         轉帳，詳見 `P 幣`_。
@@ -480,6 +480,7 @@ class API:
             money (int): 轉帳金額。
             red_bag_title (str): 紅包標題。
             red_bag_content (str): 紅包內容。
+            anonymous (bool): 是否匿名(小天使發給小主人用)
 
         Returns:
             None
@@ -499,14 +500,14 @@ class API:
                 # .. login ..
                 ptt_bot.give_money(ptt_id='CodingMan', money=100)
                 # or
-                ptt_bot.give_money('CodingMan', 100, red_bag_title='紅包袋標題', red_bag_content='紅包袋內文')
+                ptt_bot.give_money('CodingMan', 100, red_bag_title='紅包袋標題', red_bag_content='紅包袋內文', anonymous=False)
                 # .. do something ..
             finally:
                 ptt_bot.logout()
 
         """
 
-        _api_give_money.give_money(self, ptt_id, money, red_bag_title, red_bag_content)
+        _api_give_money.give_money(self, ptt_id, money, red_bag_title, red_bag_content, anonymous)
 
     def mail(self, ptt_id: str, title: str, content: str, sign_file: [int | str] = 0,
              backup: bool = True) -> None:
@@ -980,7 +981,7 @@ class API:
 
             import PyPtt
 
-            ptt_bot = PyPtt.API()
+          give_money(  ptt_bot = PyPtt.API()
             try:
                 # .. login ..
                 ptt_bot.del_post(board='Python', aid='1TJH_XY0')
