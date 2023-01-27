@@ -1,0 +1,49 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: deploy
+
+on:
+  workflow_run:
+    workflows: [ test ]
+    types:
+      - completed
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  on-test-failure:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    steps:
+      - run: echo 'Don't worry, everything will be fine.
+  deploy:
+    runs-on: ubuntu-latest
+    if: |
+      ${{ github.event.workflow_run.conclusion == 'success' }} ||
+      contains(github.event.head_commit.message, '[deploy]')
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
+      - name: Build package
+        run: python -m build
+      - name: Publish package
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
+      - name: Trigger Docker build
+        uses: InformaticsMatters/trigger-ci-action@1.0.1
+        with:
+          ci-owner: PyPtt
+          ci-repository: PyPtt_image
+          ci-user: PttCodingMan
+          ci-ref: refs/heads/main
+          ci-user-token: ${{ secrets.ACCESS_TOKEN }}
+          ci-name: build PyPtt image
