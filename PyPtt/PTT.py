@@ -1327,7 +1327,8 @@ class API:
         ptt_id: str,
         money: int,
         title: str = '',
-        content: str = '') -> None:
+        content: str = '',
+        anonymous: bool = False) -> None:
         self._one_thread()
 
         if not self._login_status:
@@ -1348,7 +1349,7 @@ class API:
         except ModuleNotFoundError:
             import _api_give_money
 
-        return _api_give_money.give_money(self, ptt_id, money, title, content)
+        return _api_give_money.give_money(self, ptt_id, money, title, content, anonymous)
 
     def mail(
             self,

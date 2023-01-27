@@ -15,7 +15,8 @@ def give_money(
         ptt_id: str,
         money: int,
         title: str,
-        content: str) -> None:
+        content: str,
+        anonymous: bool) -> None:
 
     cmd_list = list()
     cmd_list.append(command.GoMainMenu)
@@ -58,6 +59,7 @@ def give_money(
             '要修改紅包袋嗎',
             response=edit_red_bag_cmd
         )
+    anonymous_cmd = '{cmd}'.format(cmd='y' if anonymous else 'n')
 
     target_list = [
         connect_core.TargetUnit(
@@ -105,7 +107,7 @@ def give_money(
         connect_core.TargetUnit(
             i18n.AnonymousTransaction,
             '他是你的小主人，是否匿名？',
-            response='n' + command.Enter
+            response=anonymous_cmd + command.Enter
         ),
         connect_core.TargetUnit(
             i18n.InputMoney,
